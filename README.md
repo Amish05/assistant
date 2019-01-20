@@ -5,7 +5,7 @@ Virtual assistant written in python
 
 Run `main.py` in any working directory and it should work!
 
-### Features (not including builtin extensions):
+### Features (not including builtin [extensions]()):
 - timer
 - renaming files
 - weather in city

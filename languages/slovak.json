@@ -5,7 +5,8 @@
 		"exit": ["odist", "vypnut"],
 		"weather_city": ["(ake je )?pocasie (v )?.+"],
 		"weather_loc": ["(ake je )?pocasie"],
-		"web_browser": ["(otvor(it)? )?(webovy )?prehliadac"]
+		"web_browser": ["(otvor(it)? )?(webovy )?prehliadac"],
+		"lang_switch": ["jazyk .+"]
 	},
 	"weather_strings": {
 		"desc": "Popis: {}",
@@ -34,6 +35,9 @@
 	"missing_lib_strings": {
 		"pygame": "Prosim, nainstalujte kniznicu pygame, aby fungoval casovac (zvuk)!",
 		"requests": "Prosim, nainstalujte kniznicu requests, aby fungovaly informacie o pocasi!"
+	},
+	"lang_switch_strings": {
+		"switched": "Jazyk prepnuty, prosim restartujte asistenta!"
 	}
 }
 

@@ -5,7 +5,8 @@
 		"exit": ["exit", "quit", "stop"],
 		"weather_city": ["(what is )?(the )?weather (in )?.+"],
 		"weather_loc": ["(what is )?(the )?weather"],
-		"web_browser": ["(open )?(web )?browser"]
+		"web_browser": ["(open )?(web )?browser"],
+		"lang_switch": ["language .+"]
 	},
 	"weather_strings": {
 		"desc": "Description: {}",
@@ -34,6 +35,9 @@
 	"missing_lib_strings": {
 		"pygame": "Please install pygame library for timers to work!",
 		"requests": "Please install requests library for weather info to work!"
+	},
+	"lang_switch_strings": {
+		"switched": "Language switched, please restart the assistant!"
 	}
 }
 

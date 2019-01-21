@@ -26,11 +26,11 @@ class LanguageLoader:
                 lang = json.loads(f.read())
                 self.lang = lang
         else:
-            print("Language {} does not exist!".format(self.lang_name))
+            print("Language {} is not installed! Change language.txt to installed language!".format(self.lang_name))
             if lname == None:
                 self.load_lang("english")
             else:
-                print("No language file!")
+                print("No language file found!")
                 sys.exit(1)
     def get_lang(self):
         return self.lang
@@ -43,6 +43,7 @@ class Language:
         self.timer = data["timer_strings"]
         self.renamef = data["renamef_strings"]
         self.misslib = data["missing_lib_strings"]
+        self.langswitch = data["lang_switch_strings"]
 
 lang_loader = LanguageLoader()
 lang_json = lang_loader.get_lang()
@@ -103,7 +104,8 @@ class InputProcessor:
             (lambda self, txt: self.exit if any([re.match(x, txt.lower()) for x in lang.cmds["exit"]]) else False),
             (lambda self, txt: self.get_weather_city if any([re.match(x, txt.lower()) for x in lang.cmds["weather_city"]]) else False),
             (lambda self, txt: self.get_weather_loc if any([re.match(x, txt.lower()) for x in lang.cmds["weather_loc"]]) else False),
-            (lambda self, txt: self.web_browser if any([re.match(x, txt.lower()) for x in lang.cmds["web_browser"]]) else False)
+            (lambda self, txt: self.web_browser if any([re.match(x, txt.lower()) for x in lang.cmds["web_browser"]]) else False),
+            (lambda self, txt: self.lang_switch if any([re.match(x, txt.lower()) for x in lang.cmds["lang_switch"]]) else False)
         }
         self.weather_api_key = "784a4692220a1da87669120fca562bcb"
         self.extensions_list = os.listdir(make_path("extensions"))
@@ -185,6 +187,15 @@ class InputProcessor:
             print(lang.weather["no_requests_lib"])
     def web_browser(self, txt):
         Thread(target=webbrowser.open, args=("",)).start()
+    def lang_switch(self, txt):
+        spl = txt.split(" ")
+        if len(spl) >= 2:
+            with open(make_path("language.txt"), "w") as f:
+                f.write(spl[1])
+            lang_loader = LanguageLoader()
+            lang_json = lang_loader.get_lang()
+            lang = Language(lang_json)
+            print(lang.langswitch["switched"])
 
 process_input = InputProcessor()
 

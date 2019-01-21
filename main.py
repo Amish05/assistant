@@ -1,9 +1,53 @@
 import os
 import re
+import sys
+import json
 from threading import Thread, Timer
 import random
 from importlib import import_module
 import webbrowser
+
+SCRIPTDIR = os.path.dirname(os.path.abspath(__file__))
+
+def make_path(*p):
+    return os.path.join(SCRIPTDIR, *p)
+
+class LanguageLoader:
+    def __init__(self):
+        self.load_lang()
+    def load_lang(self, lname=None):
+        if lname != None:
+            self.lang_name = lname
+        else:
+            with open(make_path("language.txt")) as f:
+                self.lang_name = f.read().replace("\n", "")
+        if self.lang_name + ".json" in os.listdir(make_path("languages")):
+            with open(make_path("languages", self.lang_name + ".json")) as f:
+                lang = json.loads(f.read())
+                self.lang = lang
+        else:
+            print("Language {} does not exist!".format(self.lang_name))
+            if lname == None:
+                self.load_lang("english")
+            else:
+                print("No language file!")
+                sys.exit(1)
+    def get_lang(self):
+        return self.lang
+
+class Language:
+    def __init__(self, data):
+        self.cmds = data["commands"]
+        self.weather = data["weather_strings"]
+        self.extensions = data["extensions_strings"]
+        self.timer = data["timer_strings"]
+        self.renamef = data["renamef_strings"]
+        self.misslib = data["missing_lib_strings"]
+
+lang_loader = LanguageLoader()
+lang_json = lang_loader.get_lang()
+lang = Language(lang_json)
+
 with import_module("contextlib").redirect_stdout(None):
     try:
         from pygame import mixer
@@ -12,9 +56,9 @@ with import_module("contextlib").redirect_stdout(None):
             mixer.music.load(make_path("res", "beep_beep_beep.mp3"))
             mixer.music.play(rep)
     except ImportError:
-        print("Please install pygame library for timers to work!")
+        print(lang.misslib["pygame"])
         def make_noise(rep=3):
-            print("Please install pygame library for timers to work!")
+            print(lang.misslib["pygame"])
 try:
     import requests
     def get_weather_city(city, key):
@@ -25,47 +69,41 @@ try:
         return r.json()
 except ImportError:
     requests = False
-    print("Please install requests library for weather info to work!")
+    print(lang.misslib["requests"])
     def get_weather_city(city, key):
-        print("Please install requests library for weather info to work!")
+        print(lang.misslib["requests"])
         return None
     def get_weather_loc(city, key):
-        print("Please install requests library for weather info to work!")
+        print(lang.misslib["requests"])
         return None
-
-SCRIPTDIR = os.path.dirname(os.path.abspath(__file__))
-
-def print_weather(data):
-    if data != None:
-        if data["main"]:
-            print("Description: {}\n".format(data["weather"][0]["description"]))
-            f = data["main"]
-            print("Temperature: {}".format(f["temp"]))
-            print("Humidity: {}%".format(f["humidity"]))
-            print("Pressure: {} hPa".format(f["pressure"]))
-            print("Wind: {} m/s".format(data["wind"]["speed"]))
-        else:
-            print("Invalid data from server!")
-
-def make_path(*p):
-    return os.path.join(SCRIPTDIR, *p)
 
 class API:
     class Signal:
         def __init__(self, msg):
             self.msg = msg
 
+def print_weather(data):
+    if data != None:
+        if data["main"]:
+            print(lang.weather["desc"].format(data["weather"][0]["description"]))
+            print("")
+            f = data["main"]
+            print(lang.weather["temp"].format(f["temp"]))
+            print(lang.weather["humidity"].format(f["humidity"]))
+            print(lang.weather["pressure"].format(f["pressure"]))
+            print(lang.weather["wind"].format(data["wind"]["speed"]))
+        else:
+            print(lang.weather["invalid_data"])
+
 class InputProcessor:
     def __init__(self):
         self.testers = {
-            (lambda self, txt: self.set_timeout if re.match("(set )?timer(to )? [0-9]+ .+", txt.lower()) or re.match("(set )?timeout(to )? [0-9]+ .+", txt.lower()) else False),
-            (lambda self, txt: self.rename_file if re.match("rename .+ to .+", txt) else False),
-            (lambda self, txt: self.exit if txt.lower() in ("exit", "quit", "stop") else False),
-            (lambda self, txt: self.say if txt.lower().startswith("say") else False),
-            (lambda self, txt: self.get_weather_city if re.match("(what is )?(the )?weather (in )?.+", txt.lower()) else False),
-            (lambda self, txt: self.get_weather_loc if re.match("(what is )?(the )?weather", txt.lower()) else False),
-            (lambda self, txt: self.web_browser if re.match("(open )?(web )?browser", txt.lower()) else False),
-            (lambda self, txt: self.extension_manager if re.match("extension(s)? [a-z]+", txt.lower()) else False)
+            (lambda self, txt: self.set_timeout if any([re.match(x, txt.lower()) for x in lang.cmds["set_timer"]]) else False),
+            (lambda self, txt: self.rename_file if any([re.match(x, txt.lower()) for x in lang.cmds["rename_file"]]) else False),
+            (lambda self, txt: self.exit if any([re.match(x, txt.lower()) for x in lang.cmds["exit"]]) else False),
+            (lambda self, txt: self.get_weather_city if any([re.match(x, txt.lower()) for x in lang.cmds["weather_city"]]) else False),
+            (lambda self, txt: self.get_weather_loc if any([re.match(x, txt.lower()) for x in lang.cmds["weather_loc"]]) else False),
+            (lambda self, txt: self.web_browser if any([re.match(x, txt.lower()) for x in lang.cmds["web_browser"]]) else False)
         }
         self.weather_api_key = "784a4692220a1da87669120fca562bcb"
         self.extensions_list = os.listdir(make_path("extensions"))
@@ -88,9 +126,9 @@ class InputProcessor:
         for ext in self.extensions:
             try:
                 ext.init(self.register_request)
-                if out: print("Loaded extension {}!".format(os.path.splitext(os.path.basename(ext.__file__))[0]))
+                if out: print(lang.extensions["loaded"].format(os.path.splitext(os.path.basename(ext.__file__))[0]))
             except AttributeError:
-                if out: print("Extension {} doesn't contain init function!".format(os.path.splitext(os.path.basename(ext.__file__))[0]))
+                if out: print(lang.extensions["no_init_function"].format(os.path.splitext(os.path.basename(ext.__file__))[0]))
     def register_request(self, request, group):
         self.customtesters.add((group, request))
     
@@ -99,21 +137,21 @@ class InputProcessor:
         try:
             time = float(spl[-2])
         except ValueError:
-            print("Invalid time integer!")
+            print(lang.timer["invalid_int"])
             time = None
         unit = spl[-1][0]
         if time != None:
             if unit == "s":
                 Timer(time, make_noise).start()
-                print("Timeout set!")
+                print(lang.timer["set"])
             elif unit == "m":
                 Timer(time * 60, make_noise).start()
-                print("Timeout set!")
+                print(lang.timer["set"])
             elif unit == "h":
                 Timer(time * 60 * 60, make_noise).start()
-                print("Timeout set!")
+                print(lang.timer["set"])
             else:
-                print("Invalid time unit!")
+                print(lang.timer["invalid_unit"])
     def rename_file(self, txt):
         spl = txt.split(" ")
         if len(spl) == 4:
@@ -122,17 +160,13 @@ class InputProcessor:
             try:
                 os.rename(name1, name2)
             except OSError:
-                print("Problem occured with renaming file/folder!")
+                print(lang.renamef["problem_rename"])
             else:
-                print("File/folder renamed!")
+                print(lang.renamef["renamed"])
         else:
-            print("Invalid rename file/folder request!")
+            print(lang.renamef["invalid_req"])
     def exit(self, txt):
         return API.Signal("ExitAssistant")
-    def say(self, txt):
-        spl = txt.split(" ", 1)
-        if len(spl) == 2:
-            print(spl[1])
     def get_weather_city(self, txt):
         spl = txt.split(" ")
         if len(spl) >= 2:
@@ -140,7 +174,7 @@ class InputProcessor:
             data = get_weather_city(city, self.weather_api_key)
             print_weather(data)
         else:
-            print("Invalid weather request!")
+            print(lang.weather["invalid_req"])
     def get_weather_loc(self, txt):
         if requests:
             r = requests.get("http://ipinfo.io/loc")
@@ -148,29 +182,9 @@ class InputProcessor:
             data = get_weather_loc(loc[0], loc[1], self.weather_api_key)
             print_weather(data)
         else:
-            print("Please install requests library for weather info to work!")
+            print(lang.weather["no_requests_lib"])
     def web_browser(self, txt):
         Thread(target=webbrowser.open, args=("",)).start()
-    def extension_manager(self, txt):
-        spl = txt.split(" ")
-        cmd = spl[1]
-        if cmd == "disable":
-            if len(spl) >= 3:
-                rem = True
-                while rem:
-                    rem = False
-                    for req in self.customtesters:
-                        if req[0] == spl[2]:
-                            self.customtesters.remove(req)
-                            rem = True
-                            break
-                print("Disabled command group {}!".format(spl[2]))
-            else:
-                self.customtesters = set()
-                print("Disabled all extensions!")
-        elif cmd == "enable":
-            self.load_extensions(False)
-            print("Enabled all extensions!")
 
 process_input = InputProcessor()
 

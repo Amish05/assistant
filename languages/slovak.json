@@ -1,0 +1,39 @@
+{
+	"commands": {
+		"set_timer": ["(nastavit )?casovac(na )? [0-9]+ .+"],
+		"rename_file": ["premenovat .+ na .+"],
+		"exit": ["odist", "vypnut"],
+		"weather_city": ["(ake je )?pocasie (v )?.+"],
+		"weather_loc": ["(ake je )?pocasie"],
+		"web_browser": ["(otvor(it)? )?(webovy )?prehliadac"]
+	},
+	"weather_strings": {
+		"desc": "Popis: {}",
+		"temp": "Teplota: {} °C",
+		"humidity": "Vlhkost vzduchu: {}%",
+		"pressure": "Tlak: {} hPa",
+		"wind": "Vietor: {} m/s",
+		"invalid_data": "Neplatne data zo serveru!",
+		"invalid_req": "Neplatna poziadavka na pocasie!",
+		"no_requests_lib": "Prosim, nainstalujte kniznicu requests, aby fungovaly informacie o pocasi!"
+	},
+	"extensions_strings": {
+		"loaded": "Rozsirenie {} nacitane!",
+		"no_init_function": "Rozsirenie {} neobsahuje funkciu init!"
+	},
+	"timer_strings": {
+		"invalid_int": "Neplatne cislo casu!",
+		"invalid_unit": "Neplatna jednotka casu!",
+		"set": "Casovac nastaveny!"
+	},
+	"renamef_strings": {
+		"problem_rename": "Nepodarilo sa premenovat subor/zlozku!",
+		"renamed": "Subor/zlozka premenovany!",
+		"invalid_req": "Neplatny poziadavok o premenovanie suboru!"
+	},
+	"missing_lib_strings": {
+		"pygame": "Prosim, nainstalujte kniznicu pygame, aby fungoval casovac (zvuk)!",
+		"requests": "Prosim, nainstalujte kniznicu requests, aby fungovaly informacie o pocasi!"
+	}
+}
+

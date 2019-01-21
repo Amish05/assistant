@@ -1,0 +1,39 @@
+{
+	"commands": {
+		"set_timer": ["(set )?timer(to )? [0-9]+ .+", "(set )?timeout(to )? [0-9]+ .+"],
+		"rename_file": ["rename .+ to .+"],
+		"exit": ["exit", "quit", "stop"],
+		"weather_city": ["(what is )?(the )?weather (in )?.+"],
+		"weather_loc": ["(what is )?(the )?weather"],
+		"web_browser": ["(open )?(web )?browser"]
+	},
+	"weather_strings": {
+		"desc": "Description: {}",
+		"temp": "Temperature: {} °C",
+		"humidity": "Humidity: {}%",
+		"pressure": "Pressure: {} hPa",
+		"wind": "Wind: {} m/s",
+		"invalid_data": "Invalid data from server!",
+		"invalid_req": "Invalid weather request!",
+		"no_requests_lib": "Please install requests library for weather info to work!"
+	},
+	"extensions_strings": {
+		"loaded": "Loaded extension {}!",
+		"no_init_function": "Extension {} doesn't contain init function!"
+	},
+	"timer_strings": {
+		"invalid_int": "Invalid time integer!",
+		"invalid_unit": "Invalid time unit!",
+		"set": "Timeout set!"
+	},
+	"renamef_strings": {
+		"problem_rename": "Problem occured with renaming file/folder!",
+		"renamed": "File/folder renamed!",
+		"invalid_req": "Invalid file/folder rename request!"
+	},
+	"missing_lib_strings": {
+		"pygame": "Please install pygame library for timers to work!",
+		"requests": "Please install requests library for weather info to work!"
+	}
+}
+

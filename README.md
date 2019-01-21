@@ -21,7 +21,7 @@ Run `main.py` in any working directory and it should work!
 - weather in your location - `(what is )?(the )?weather` - example: `what is weather`
 - switching language - `language .+` - example: `language english`
 
-**Note**: commands (not examples) are written in (https://en.wikipedia.org/wiki/Regular_expression)[regex] here
+**Note**: commands (not examples) are written in [regex](https://en.wikipedia.org/wiki/Regular_expression) here
 
 ### Extension system
 

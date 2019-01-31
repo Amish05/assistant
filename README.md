@@ -27,10 +27,14 @@ Run `main.py` in any working directory and it should work!
 
 If you want to install an extension, just copy/paste it into `extensions` directory.
 
+### Built-in extensions:
+- Guess the number
+- Digital clock
+
 ### Changing language
 
 If you want to switch language, put language file into `languages` directory and change contents of `language.txt` file to name of your language file (without .json extension) or use language switcher (builtin command).
 
-### Builtin languages:
+### Built-in languages:
 - English
 - Slovak

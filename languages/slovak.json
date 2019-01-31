@@ -16,7 +16,8 @@
 		"wind": "Vietor: {} m/s",
 		"invalid_data": "Neplatne data zo serveru!",
 		"invalid_req": "Neplatna poziadavka na pocasie!",
-		"no_requests_lib": "Prosim, nainstalujte kniznicu requests, aby fungovaly informacie o pocasi!"
+		"no_requests_lib": "Prosim, nainstalujte kniznicu requests, aby fungovaly informacie o pocasi!",
+		"city_not_found": "Mesto nebolo najdene!"
 	},
 	"extensions_strings": {
 		"loaded": "Rozsirenie {} nacitane!",
@@ -37,7 +38,7 @@
 		"requests": "Prosim, nainstalujte kniznicu requests, aby fungovaly informacie o pocasi!"
 	},
 	"lang_switch_strings": {
-		"switched": "Jazyk prepnuty, prosim restartujte asistenta!"
+		"switched": "Jazyk prepnuty!"
 	}
 }
 

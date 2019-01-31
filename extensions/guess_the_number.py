@@ -48,7 +48,7 @@ class Extension:
                     print("You guessed the number with {} guesses!".format(g))
                     break
 
-def init(register):
+def init(register, language):
     reqs = (
         (lambda txt: Extension.guess_the_number if Extension.re.match(r"guess (the )?number( [0-9]+( )?\-( )?[0-9]+)?", txt.lower()) else False),
     )

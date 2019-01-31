@@ -9,6 +9,11 @@ import webbrowser
 
 SCRIPTDIR = os.path.dirname(os.path.abspath(__file__))
 
+print_ = print
+
+def print(*argvs, **kwargs):
+    print_(*argvs, **kwargs)
+
 def make_path(*p):
     return os.path.join(SCRIPTDIR, *p)
 
@@ -26,9 +31,10 @@ class LanguageLoader:
                 lang = json.loads(f.read())
                 self.lang = lang
         else:
-            print("Language {} is not installed! Change language.txt to installed language!".format(self.lang_name))
+            print("Language {} is not installed! Please change language.txt to installed language!".format(self.lang_name))
             if lname == None:
                 self.load_lang("english")
+                self.lang_name = "english"
             else:
                 print("No language file found!")
                 sys.exit(1)
@@ -36,7 +42,8 @@ class LanguageLoader:
         return self.lang
 
 class Language:
-    def __init__(self, data):
+    def __init__(self, data, name):
+        self.NAME = name
         self.cmds = data["commands"]
         self.weather = data["weather_strings"]
         self.extensions = data["extensions_strings"]
@@ -47,7 +54,7 @@ class Language:
 
 lang_loader = LanguageLoader()
 lang_json = lang_loader.get_lang()
-lang = Language(lang_json)
+lang = Language(lang_json, lang_loader.lang_name)
 
 with import_module("contextlib").redirect_stdout(None):
     try:
@@ -85,7 +92,7 @@ class API:
 
 def print_weather(data):
     if data != None:
-        if data["main"]:
+        if "main" in data:
             print(lang.weather["desc"].format(data["weather"][0]["description"]))
             print("")
             f = data["main"]
@@ -93,11 +100,13 @@ def print_weather(data):
             print(lang.weather["humidity"].format(f["humidity"]))
             print(lang.weather["pressure"].format(f["pressure"]))
             print(lang.weather["wind"].format(data["wind"]["speed"]))
+        elif "cod" in data:
+            print(lang.weather["city_not_found"])
         else:
             print(lang.weather["invalid_data"])
 
 class InputProcessor:
-    def __init__(self):
+    def __init__(self, ext_load_text=True):
         self.testers = {
             (lambda self, txt: self.set_timeout if any([re.match(x, txt.lower()) for x in lang.cmds["set_timer"]]) else False),
             (lambda self, txt: self.rename_file if any([re.match(x, txt.lower()) for x in lang.cmds["rename_file"]]) else False),
@@ -107,9 +116,10 @@ class InputProcessor:
             (lambda self, txt: self.web_browser if any([re.match(x, txt.lower()) for x in lang.cmds["web_browser"]]) else False),
             (lambda self, txt: self.lang_switch if any([re.match(x, txt.lower()) for x in lang.cmds["lang_switch"]]) else False)
         }
+        self.cusomtesters = set()
         self.weather_api_key = "784a4692220a1da87669120fca562bcb"
         self.extensions_list = os.listdir(make_path("extensions"))
-        self.load_extensions(True)
+        self.load_extensions(ext_load_text)
     def __call__(self, txt):
         for tester in self.testers:
             res = tester(self, txt)
@@ -127,7 +137,7 @@ class InputProcessor:
                 self.extensions.append(import_module("extensions.{}".format((os.path.splitext(ext)[0] if "." in ext else ext))))
         for ext in self.extensions:
             try:
-                ext.init(self.register_request)
+                ext.init(self.register_request, lang.NAME)
                 if out: print(lang.extensions["loaded"].format(os.path.splitext(os.path.basename(ext.__file__))[0]))
             except AttributeError:
                 if out: print(lang.extensions["no_init_function"].format(os.path.splitext(os.path.basename(ext.__file__))[0]))
@@ -188,13 +198,17 @@ class InputProcessor:
     def web_browser(self, txt):
         Thread(target=webbrowser.open, args=("",)).start()
     def lang_switch(self, txt):
+        global lang_loader
+        global lang_json
+        global lang
         spl = txt.split(" ")
         if len(spl) >= 2:
             with open(make_path("language.txt"), "w") as f:
                 f.write(spl[1])
             lang_loader = LanguageLoader()
             lang_json = lang_loader.get_lang()
-            lang = Language(lang_json)
+            lang = Language(lang_json, lang_loader.lang_name)
+            self.__init__(False)
             print(lang.langswitch["switched"])
 
 process_input = InputProcessor()
@@ -204,9 +218,9 @@ def main_loop():
         try:
             inp = input(">>> ")
         except KeyboardInterrupt:
-            print()
-            break
+            pass
         except EOFError:
+            print()
             break
         else:
             res = process_input(inp)

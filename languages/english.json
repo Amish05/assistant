@@ -1,6 +1,6 @@
 {
 	"commands": {
-		"set_timer": ["(set )?timer(to )? [0-9]+ .+", "(set )?timeout(to )? [0-9]+ .+"],
+		"set_timer": ["(set )?timer(to )? [0-9]+ .+"],
 		"rename_file": ["rename .+ to .+"],
 		"exit": ["exit", "quit", "stop"],
 		"weather_city": ["(what is )?(the )?weather (in )?.+"],
@@ -16,7 +16,8 @@
 		"wind": "Wind: {} m/s",
 		"invalid_data": "Invalid data from server!",
 		"invalid_req": "Invalid weather request!",
-		"no_requests_lib": "Please install requests library for weather info to work!"
+		"no_requests_lib": "Please install requests library for weather info to work!",
+		"city_not_found": "City not found!"
 	},
 	"extensions_strings": {
 		"loaded": "Loaded extension {}!",
@@ -37,7 +38,7 @@
 		"requests": "Please install requests library for weather info to work!"
 	},
 	"lang_switch_strings": {
-		"switched": "Language switched, please restart the assistant!"
+		"switched": "Language switched!"
 	}
 }
 

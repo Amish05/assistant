@@ -1,0 +1,43 @@
+{
+	"commands": {
+		"set_timer": ["(nastavit )?casovac(na )? [0-9]+ .+"],
+		"rename_file": ["prejmenovat .+ na .+"],
+		"exit": ["odejit", "vypnout"],
+		"weather_city": ["(jake je )?pocasi (v )?.+"],
+		"weather_loc": ["(jake je )?pocasi"],
+		"web_browser": ["(otevr(it)? )?(webovy )?prohlizec"],
+		"lang_switch": ["jazyk .+"]
+	},
+	"weather_strings": {
+		"desc": "Popis: {}",
+		"temp": "Teplota: {} °C",
+		"humidity": "Vlhkost vzduchu: {}%",
+		"pressure": "Tlak: {} hPa",
+		"wind": "Vitr: {} m/s",
+		"invalid_data": "Neplatne data ze serveru!",
+		"invalid_req": "Neplatny pozadavek na pocasi!",
+		"no_requests_lib": "Prosim, nainstalujte knihovnu requests, aby fungovaly informace o pocasi!",
+		"city_not_found": "Mesto nenalezeno!"
+	},
+	"extensions_strings": {
+		"loaded": "Rozsireni {} nacteno!",
+		"no_init_function": "Rozsireni {} neobsahuje funkci init!"
+	},
+	"timer_strings": {
+		"invalid_int": "Neplatne cislo casu!",
+		"invalid_unit": "Neplatna jednotka casu!",
+		"set": "Casovac nastaveny!"
+	},
+	"renamef_strings": {
+		"problem_rename": "Nepodarilo se prejmenovat soubor/slozku!",
+		"renamed": "Soubor/slozka prejmenovany(a)!",
+		"invalid_req": "Neplatny pozadavek o prejmenovani souboru!"
+	},
+	"missing_lib_strings": {
+		"pygame": "Prosim, nainstalujte knihovnu pygame, aby fungoval casovac (zvuk)!",
+		"requests": "Prosim, nainstalujte knihovnu requests, aby fungovaly informace o pocasi!"
+	},
+	"lang_switch_strings": {
+		"switched": "Jazyk prepnuty!"
+	}
+}
